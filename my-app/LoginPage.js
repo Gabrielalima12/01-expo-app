@@ -1,12 +1,15 @@
 import React, { Component } from 'react';
 import './LoginPage.css'; // Import a CSS file for styling
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
 class LoginPage extends Component {
   constructor() {
     super();
     this.state = {
-      username: '',
+      email: '',
       password: '',
+      username: '', // Adicione o campo "username" para registro
     };
   }
 
@@ -15,16 +18,31 @@ class LoginPage extends Component {
     this.setState({ [name]: value });
   }
 
-  handleLogin = () => {
-    const { username, password } = this.state;
-    // Implement your login logic here
-    console.log(`Logging in with username: ${username} and password: ${password}`);
+  handleLogin = async () => {
+    const { email, password } = this.state;
+
+    try {
+      await firebase.auth().signInWithEmailAndPassword(email, password);
+
+      // Se o login for bem-sucedido, exiba um popup de sucesso
+      alert('Login bem-sucedido');
+    } catch (error) {
+      // Se o login falhar, exiba um popup de erro
+      alert('Falha no login: ' + error.message);
+    }
   }
 
-  handleSignUp = () => {
-    const { username, password } = this.state;
-    // Implement your sign-up logic here
-    console.log(`Signing up with username: ${username} and password: ${password}`);
+  handleSignUp = async () => {
+    const { email, password, username } = this.state;
+    try {
+      await firebase.auth().createUserWithEmailAndPassword(email, password);
+      // O usuário foi criado com sucesso, você pode adicionar informações adicionais ao usuário
+      // ou realizar outras ações necessárias aqui
+      alert('Cadastro bem-sucedido');
+    } catch (error) {
+      // Se a criação de usuário falhar, exiba um popup de erro
+      alert('Falha no cadastro: ' + error.message);
+    }
   }
 
   render() {
@@ -33,11 +51,11 @@ class LoginPage extends Component {
         <h1>Login Page</h1>
         <form>
           <div className="form-group">
-            <label>Username:</label>
+            <label>Email:</label>
             <input
-              type="text"
-              name="username"
-              value={this.state.username}
+              type="email"
+              name="email"
+              value={this.state.email}
               onChange={this.handleInputChange}
             />
           </div>
